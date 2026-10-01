@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Controle de Saúde</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header>
+    <div class="header-conteudo">
+
+        <div>
+            <h1>💊 Controle de Saúde</h1>
+            <p>Controle de medicamentos</p>
+        </div>
+
+        <div class="usuario-header">
+            <span id="usuarioAtual">Não identificado</span>
+            <button onclick="trocarUsuario()">Trocar usuário</button>
+        </div>
+
+    </div>
+</header>
+
+
+<main>
+
+    <!-- LOGIN -->
+
+    <section id="telaUsuario" class="tela-usuario">
+
+        <div class="usuario-box">
+
+            <div class="icone-usuario">
+                👤
+            </div>
+
+            <h2>Quem está acessando?</h2>
+
+            <p>
+                Selecione seu nome para continuar.
+            </p>
+
+            <div id="listaUsuarios" class="lista-usuarios"></div>
+
+        </div>
+
+    </section>
+
+
+    <!-- SISTEMA -->
+
+    <section id="sistema" class="sistema escondido">
+
+        <!-- DASHBOARD -->
+
+        <section class="dashboard">
+
+            <div class="card-dashboard">
+                <span>💊</span>
+
+                <div>
+                    <strong id="totalMedicamentos">0</strong>
+                    <p>Medicamentos</p>
+                </div>
+            </div>
+
+
+            <div class="card-dashboard">
+                <span>📦</span>
+
+                <div>
+                    <strong id="totalEstoque">0</strong>
+                    <p>Unidades em estoque</p>
+                </div>
+            </div>
+
+
+            <div class="card-dashboard">
+                <span>📋</span>
+
+                <div>
+                    <strong id="totalRetiradas">0</strong>
+                    <p>Retiradas</p>
+                </div>
+            </div>
+
+
+            <div class="card-dashboard alerta-card">
+                <span>⚠️</span>
+
+                <div>
+                    <strong id="estoqueBaixo">0</strong>
+                    <p>Estoques baixos</p>
+                </div>
+            </div>
+
+        </section>
+
+
+        <!-- BANNER -->
+
+        <section class="banner">
+
+            <div>
+                <h2>Controle de medicamentos</h2>
+
+                <p>
+                    Selecione um medicamento para registrar uma retirada.
+                </p>
+            </div>
+
+        </section>
+
+
+        <!-- PESQUISA -->
+
+        <section class="ferramentas">
+
+            <input
+                type="text"
+                id="pesquisa"
+                placeholder="🔎 Pesquisar medicamento..."
+                oninput="filtrarMedicamentos()"
+            >
+
+            <select id="filtroEstoque" onchange="filtrarMedicamentos()">
+
+                <option value="todos">
+                    Todos
+                </option>
+
+                <option value="normal">
+                    Estoque normal
+                </option>
+
+                <option value="baixo">
+                    Estoque baixo
+                </option>
+
+                <option value="esgotado">
+                    Esgotados
+                </option>
+
+            </select>
+
+            <button
+                class="botao-historico"
+                onclick="abrirHistorico()">
+
+                📋 Histórico
+
+            </button>
+
+        </section>
+
+
+        <!-- MEDICAMENTOS -->
+
+        <section>
+
+            <div class="titulo-secao">
+
+                <h2>Medicamentos</h2>
+
+                <span id="contadorMedicamentos">
+                    0 medicamentos
+                </span>
+
+            </div>
+
+            <div
+                id="produtos"
+                class="produtos">
+            </div>
+
+        </section>
+
+    </section>
+
+</main>
+
+
+<!-- MODAL DE RETIRADA -->''
+
+<div
+    id="modal"
+    class="modal">
+
+    <div class="modal-conteudo">
+
+        <button
+            class="fechar"
+            onclick="fecharModal()">
+
+            ✕
+
+        </button>
+
+
+        <h2>Registrar retirada</h2>
+
+        <div
+            id="produtoSelecionado"
+            class="produto-selecionado">
+        </div>
+
+
+        <div class="campos-retirada">
+
+            <div class="campo">
+
+                <label>
+                    Usuário
+                </label>
+
+                <input
+                    type="text"
+                    id="nome"
+                    readonly>
+
+            </div>
+
+
+            <div class="campo">
+
+                <label for="quantidade">
+                    Quantidade
+                </label>
+
+                <select id="quantidade">
+
+                    <option value="1">
+                        1
+                    </option>
+
+                    <option value="5">
+                        5
+                    </option>
+
+                    <option value="15">
+                        15
+                    </option>
+
+                    <option value="20">
+                        20
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <button
+            class="confirmar"
+            onclick="confirmarRetirada()">
+
+            ✓ Confirmar retirada
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- MODAL HISTÓRICO -->
+
+<div
+    id="modalHistorico"
+    class="modal">
+
+    <div class="modal-conteudo modal-historico">
+
+        <button
+            class="fechar"
+            onclick="fecharHistorico()">
+
+            ✕
+
+        </button>
+
+
+        <h2>📋 Histórico de retiradas</h2>
+
+
+        <div class="filtro-historico">
+
+            <select
+                id="filtroUsuarioHistorico"
+                onchange="carregarHistorico()">
+
+                <option value="todos">
+                    Todos os usuários
+                </option>
+
+                <option value="Anelísio">
+                    Anelísio
+                </option>
+
+                <option value="Rogério">
+                    Rogério
+                </option>
+
+                <option value="Alexandre">
+                    Alexandre
+                </option>
+
+                <option value="Rafael">
+                    Rafael
+                </option>
+
+                <option value="Carla">
+                    Carla
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <div id="listaHistorico"></div>
+
+    </div>
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="script.js"></script>
+</body>
+</html>
+
+</body>
+
+</html>
